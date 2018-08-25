@@ -80,7 +80,7 @@ class BlogController
     {
         $posts = $this->session->get('posts');
 
-        if (!$posts || !$posts[$id]) {
+        if (!$posts || !isset($posts[$id])) {
             throw new NotFoundHttpException('Post not found!');
         }
 
