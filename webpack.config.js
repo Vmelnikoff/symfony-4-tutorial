@@ -17,8 +17,16 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
      */
-    .addEntry('app', ['./assets/js/app.js'])
-    .addStyleEntry('css/app', ['./assets/css/app.scss'])
+    .addEntry('js/app', [
+        './node_modules/jquery/dist/jquery.slim.js',
+        './node_modules/popper.js/dist/popper.min.js',
+        './node_modules/bootstrap/dist/js/bootstrap.min.js',
+        './node_modules/holderjs/holder.min.js'
+    ])
+    .addStyleEntry('css/app', [
+        './node_modules/bootstrap/dist/css/bootstrap.min.css',
+        './assets/css/app.css'
+    ])
     //.addEntry('page1', './assets/js/page1.js')
     //.addEntry('page2', './assets/js/page2.js')
 

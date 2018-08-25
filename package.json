@@ -1,5 +1,12 @@
 {
   "devDependencies": {
-    "@symfony/webpack-encore": "symfony/webpack-encore"
+    "@symfony/webpack-encore": "symfony/webpack-encore",
+    "webpack-notifier": "1.6.0"
+  },
+  "dependencies": {
+    "bootstrap": "4.0.0",
+    "holderjs": "^2.9.4",
+    "jquery": "3.3",
+    "popper.js": "1.12.9"
   }
 }
