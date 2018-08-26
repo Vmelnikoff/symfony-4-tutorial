@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -39,94 +40,119 @@ class MicroPostController
      * @var RouterInterface
      */
     private $router;
+    /**
+     * @var FlashBagInterface
+     */
+    private $flashBag;
 
     public function __construct(
         \Twig_Environment $twig,
         MicroPostRepository $microPostRepository,
         FormFactoryInterface $formFactory,
         EntityManagerInterface $entityManager,
-        RouterInterface $router
+        RouterInterface $router,
+        FlashBagInterface $flashBag
     ) {
         $this->twig = $twig;
         $this->microPostRepository = $microPostRepository;
         $this->formFactory = $formFactory;
         $this->entityManager = $entityManager;
         $this->router = $router;
+        $this->flashBag = $flashBag;
     }
 
-    /**
-     * @Route("/", name="micro_post_index")
-     */
-    public function index(): Response
-    {
-        $html = $this->twig->render('micro-post/index.html.twig', [
-            'posts' => $this->microPostRepository->findBy([], ['time' => 'DESC']),
-        ]);
+/**
+ * @Route("/", name="micro_post_index")
+ */
+public
+function index(): Response
+{
+    $html = $this->twig->render('micro-post/index.html.twig', [
+        'posts' => $this->microPostRepository->findBy([], ['time' => 'DESC']),
+    ]);
 
-        return new Response($html);
+    return new Response($html);
+}
+
+/**
+ * @Route("/edit/{id}", name="micro_post_edit")
+ */
+public
+function edit(MicroPost $microPost, Request $request): Response
+{
+    $form = $this->formFactory->create(MicroPostType::class, $microPost);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $this->entityManager->flush();
+
+        return new RedirectResponse($this->router->generate('micro_post_index'));
     }
 
-    /**
-     * @Route("/edit/{id}", name="micro_post_edit")
-     */
-    public function edit(MicroPost $microPost, Request $request): Response
-    {
-        $form = $this->formFactory->create(MicroPostType::class, $microPost);
-        $form->handleRequest($request);
+    return new Response(
+        $this->twig->render('micro-post/add.html.twig', [
+            'form' => $form->createView()
+        ])
+    );
+}
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
 
-            return new RedirectResponse($this->router->generate('micro_post_index'));
-        }
+/**
+ * @Route("/add", name="micro_post_add")
+ */
+public
+function add(Request $request): Response
+{
+    $microPost = new MicroPost();
+    $microPost->setTime(new \DateTime());
 
-        return new Response(
-            $this->twig->render('micro-post/add.html.twig', [
-                'form' => $form->createView()
-            ])
-        );
+    $form = $this->formFactory->create(MicroPostType::class, $microPost);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $this->entityManager->persist($microPost);
+        $this->entityManager->flush();
+
+        return new RedirectResponse($this->router->generate('micro_post_index'));
     }
 
+    return new Response(
+        $this->twig->render('micro-post/add.html.twig', [
+            'form' => $form->createView()
+        ])
+    );
+}
 
-    /**
-     * @Route("/add", name="micro_post_add")
-     */
-    public function add(Request $request): Response
-    {
-        $microPost = new MicroPost();
-        $microPost->setTime(new \DateTime());
+/**
+ * @Route("/delete{id}", name="micro_post_delete")
+ */
+public
+function delete(MicroPost $microPost): Response
+{
+    $this->entityManager->remove($microPost);
+    $this->entityManager->flush();
 
-        $form = $this->formFactory->create(MicroPostType::class, $microPost);
-        $form->handleRequest($request);
+    $this->flashBag->add('notice', 'MicroPost was deleted');
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->persist($microPost);
-            $this->entityManager->flush();
+    return new RedirectResponse($this->router->generate('micro_post_index'));
+}
 
-            return new RedirectResponse($this->router->generate('micro_post_index'));
-        }
 
-        return new Response(
-            $this->twig->render('micro-post/add.html.twig', [
-                'form' => $form->createView()
-            ])
-        );
-    }
-
-    /**
-     * @Route("/{id}", name="micro_post_post")
-     */
-    public function post(MicroPost $post): Response
-    {
+/**
+ * @Route("/{id}", name="micro_post_post")
+ */
+public
+function post(MicroPost $post): Response
+{
 //        use ParamConverter for fetch $post
 //        $post = $this->microPostRepository->find($id);
 
-        return new Response($this->twig->render(
-            'micro-post/post.html.twig', [
-                'post' => $post,
-            ]
-        ));
-    }
+    return new Response($this->twig->render(
+        'micro-post/post.html.twig', [
+            'post' => $post,
+        ]
+    ));
+}
 
 
 }
