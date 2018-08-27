@@ -37,16 +37,10 @@ class User implements UserInterface, \Serializable
      */
     private $fullName;
 
-    
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getRoles()
     {
         return [
-            'ROLE_USER',
+            'ROLE_USER'
         ];
     }
 
@@ -67,70 +61,22 @@ class User implements UserInterface, \Serializable
 
     public function eraseCredentials()
     {
-        // TODO: Implement eraseCredentials() method.
+
     }
 
-
-    /**
-     * String representation of object
-     * @link https://php.net/manual/en/serializable.serialize.php
-     * @return string the string representation of the object or null
-     * @since 5.1.0
-     */
     public function serialize()
     {
         return serialize([
             $this->id,
             $this->username,
-            $this->password,
+            $this->password
         ]);
     }
 
-    /**
-     * Constructs the object
-     * @link https://php.net/manual/en/serializable.unserialize.php
-     * @param string $serialized <p>
-     * The string representation of the object.
-     * </p>
-     * @return void
-     * @since 5.1.0
-     */
     public function unserialize($serialized)
     {
         list($this->id,
             $this->username,
-            $this->password) = $serialized;
+            $this->password) = unserialize($serialized);
     }
-
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    public function setEmail($email): void
-    {
-        $this->email = $email;
-    }
-
-    public function getFullName()
-    {
-        return $this->fullName;
-    }
-
-    public function setFullName($fullName): void
-    {
-        $this->fullName = $fullName;
-    }
-
-    public function setUsername($username): void
-    {
-        $this->username = $username;
-    }
-
-    public function setPassword($password): void
-    {
-        $this->password = $password;
-    }
-
-
 }
