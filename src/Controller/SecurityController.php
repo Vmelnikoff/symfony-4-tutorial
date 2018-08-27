@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Controller;
-
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,16 +18,16 @@ class SecurityController
         $this->twig = $twig;
     }
 
-
     /**
      * @Route("/login", name="security_login")
      */
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils)
     {
-        return new Response($this->twig->render('security/login.html.twig',
+        return new Response($this->twig->render(
+            'security/login.html.twig',
             [
                 'last_username' => $authenticationUtils->getLastUsername(),
-                'error' => $authenticationUtils->getLastAuthenticationError(),
+                'error' => $authenticationUtils->getLastAuthenticationError()
             ]
         ));
     }
@@ -37,9 +35,8 @@ class SecurityController
     /**
      * @Route("/logout", name="security_logout")
      */
-    public function logout(): Response
+    public function logout()
     {
-        //TODO:
-    }
 
+    }
 }
