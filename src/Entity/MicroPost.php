@@ -60,6 +60,9 @@ class MicroPost
         $this->time = $time;
     }
 
+    /**
+     * @return User
+     */
     public function getUser()
     {
         return $this->user;
