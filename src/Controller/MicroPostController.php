@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 use App\Entity\MicroPost;
+use App\Entity\User;
 use App\Form\MicroPostType;
 use App\Repository\MicroPostRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -71,110 +72,133 @@ class MicroPostController
         $this->authorizationChecker = $authorizationChecker;
     }
 
-/**
- * @Route("/", name="micro_post_index")
- */
-public
-function index(): Response
-{
-    $html = $this->twig->render('micro-post/index.html.twig', [
-        'posts' => $this->microPostRepository->findBy([], ['time' => 'DESC']),
-    ]);
+    /**
+     * @Route("/", name="micro_post_index")
+     */
+    public
+    function index(): Response
+    {
+        $html = $this->twig->render('micro-post/index.html.twig', [
+            'posts' => $this->microPostRepository->findBy([], ['time' => 'DESC']),
+        ]);
 
-    return new Response($html);
-}
+        return new Response($html);
+    }
 
-/**
- * @Route("/edit/{id}", name="micro_post_edit")
- * @Security("is_granted('edit', microPost)", message="Access denied")
- */
-public
-function edit(MicroPost $microPost, Request $request): Response
-{
+    /**
+     * @Route("/edit/{id}", name="micro_post_edit")
+     * @Security("is_granted('edit', microPost)", message="Access denied")
+     */
+    public
+    function edit(
+        MicroPost $microPost,
+        Request $request
+    ): Response {
 //    $this->denyAccessUnlessGranted('edit', $microPost);
 
 //    if (!$this->authorizationChecker->isGranted('edit', $microPost)) {
 //        throw new UnauthorizedHttpException();
 //    }
-    $form = $this->formFactory->create(MicroPostType::class, $microPost);
-    $form->handleRequest($request);
+        $form = $this->formFactory->create(MicroPostType::class, $microPost);
+        $form->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        $this->entityManager->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->flush();
 
-        return new RedirectResponse($this->router->generate('micro_post_index'));
+            return new RedirectResponse($this->router->generate('micro_post_index'));
+        }
+
+        return new Response(
+            $this->twig->render('micro-post/add.html.twig', [
+                'form' => $form->createView()
+            ])
+        );
     }
 
-    return new Response(
-        $this->twig->render('micro-post/add.html.twig', [
-            'form' => $form->createView()
-        ])
-    );
-}
 
-
-/**
- * @Route("/add", name="micro_post_add")
- * @Security("is_granted('ROLE_USER')")
- */
-public
-function add(Request $request, TokenStorageInterface $tokenStorage): Response
-{
+    /**
+     * @Route("/add", name="micro_post_add")
+     * @Security("is_granted('ROLE_USER')")
+     */
+    public
+    function add(
+        Request $request,
+        TokenStorageInterface $tokenStorage
+    ): Response {
 //    $user = $this->getUser();
-    $user = $tokenStorage->getToken()->getUser();
+        $user = $tokenStorage->getToken()->getUser();
 
-    $microPost = new MicroPost();
-    $microPost->setTime(new \DateTime());
-    $microPost->setUser($user);
+        $microPost = new MicroPost();
+        $microPost->setTime(new \DateTime());
+        $microPost->setUser($user);
 
-    $form = $this->formFactory->create(MicroPostType::class, $microPost);
-    $form->handleRequest($request);
+        $form = $this->formFactory->create(MicroPostType::class, $microPost);
+        $form->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        $this->entityManager->persist($microPost);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->persist($microPost);
+            $this->entityManager->flush();
+
+            return new RedirectResponse($this->router->generate('micro_post_index'));
+        }
+
+        return new Response(
+            $this->twig->render('micro-post/add.html.twig', [
+                'form' => $form->createView()
+            ])
+        );
+    }
+
+    /**
+     * @Route("/delete{id}", name="micro_post_delete")
+     * @Security("is_granted('delete', microPost)", message="Access denied")
+     */
+    public
+    function delete(
+        MicroPost $microPost
+    ): Response {
+        $this->entityManager->remove($microPost);
         $this->entityManager->flush();
+
+        $this->flashBag->add('notice', 'MicroPost was deleted');
 
         return new RedirectResponse($this->router->generate('micro_post_index'));
     }
 
-    return new Response(
-        $this->twig->render('micro-post/add.html.twig', [
-            'form' => $form->createView()
-        ])
-    );
-}
+    /**
+     * @Route("/user/{username}", name="micro_post_user")
+     */
+    public function userPosts(User $userWithPosts): Response
+    {
+        $html = $this->twig->render('micro-post/index.html.twig', [
+//            'posts' => $this->microPostRepository->findBy(
+//                ['user' => $userWithPosts,],
+//                ['time' => 'DESC']
+//            ),
 
-/**
- * @Route("/delete{id}", name="micro_post_delete")
- * @Security("is_granted('delete', microPost)", message="Access denied")
- */
-public
-function delete(MicroPost $microPost): Response
-{
-    $this->entityManager->remove($microPost);
-    $this->entityManager->flush();
+            'posts' => $userWithPosts->getPosts(),
+        ]);
 
-    $this->flashBag->add('notice', 'MicroPost was deleted');
-
-    return new RedirectResponse($this->router->generate('micro_post_index'));
-}
+        return new Response($html);
+    }
 
 
-/**
- * @Route("/{id}", name="micro_post_post")
- */
-public
-function post(MicroPost $post): Response
-{
+    /**
+     * @Route("/{id}", name="micro_post_post")
+     */
+    public
+    function post(
+        MicroPost $post
+    ): Response {
 //        use ParamConverter for fetch $post
 //        $post = $this->microPostRepository->find($id);
 
-    return new Response($this->twig->render(
-        'micro-post/post.html.twig', [
-            'post' => $post,
-        ]
-    ));
-}
+        return new Response($this->twig->render(
+            'micro-post/post.html.twig', [
+                'post' => $post,
+            ]
+        ));
+    }
 
 
 }
