@@ -129,7 +129,9 @@ class MicroPostController
         $user = $tokenStorage->getToken()->getUser();
 
         $microPost = new MicroPost();
-        $microPost->setTime(new \DateTime());
+//        Используем LifeCycle Callbacks вместо прямой вставки
+//        $microPost->setTime(new \DateTime());
+
         $microPost->setUser($user);
 
         $form = $this->formFactory->create(MicroPostType::class, $microPost);
