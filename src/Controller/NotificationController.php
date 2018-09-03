@@ -31,11 +31,23 @@ class NotificationController extends Controller
      * @Route("/unread-count", name="notification_unread")
      */
     public function unreadCount(): Response
-        {
-            return new JsonResponse([
-                'count' => $this->notificationRepository->findUnseenByUser($this->getUser()),
-            ]);
-        }
+    {
+        return new JsonResponse([
+            'count' => $this->notificationRepository->findUnseenByUser($this->getUser()),
+        ]);
+    }
 
+    /**
+     * @Route("/all", name="notification_all")
+     */
+    public function notifications(): Response
+    {
+        return $this->render('notification/notifications.html.twig', [
+            'notifications' => $this->notificationRepository->findBy([
+                'seen' => false,
+                'user' => $this->getUser(),
+            ]),
+        ]);
+    }
 
 }
