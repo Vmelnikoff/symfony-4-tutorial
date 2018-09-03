@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 
+use App\Entity\Notification;
 use App\Repository\NotificationRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -49,5 +50,28 @@ class NotificationController extends Controller
             ]),
         ]);
     }
+
+    /**
+     * @Route("/acknowledge/{id}", name="notification_acknowledge")
+     */
+    public function acknowledge(Notification $notification): Response
+    {
+        $notification->setSeen(true);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->redirectToRoute('notification_all');
+    }
+
+    /**
+     * @Route("/acknowledge-all", name="notification_acknowledge-all")
+     */
+    public function acknowledgeAll(): Response
+            {
+                $this->notificationRepository->markAllAsReadByUser($this->getUser());
+                $this->getDoctrine()->getManager()->flush();
+
+                return $this->redirectToRoute('notification_all');
+            }
+    
 
 }
