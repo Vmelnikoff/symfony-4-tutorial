@@ -26,11 +26,12 @@ class MicroPostRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('p');
 
         return $qb->select('p')
-            ->where('p.user IN (:following)')
-            ->setParameter(':following', $users)
-            ->orderBy('p.time', 'DESC')
-            ->getQuery()
-            ->getResult();
+                  ->where('p.user IN (:following)')
+                  ->setParameter(':following', $users)
+                  ->orderBy('p.time', 'DESC')
+                  ->getQuery()
+                  ->getResult()
+            ;
     }
 
 //    /**

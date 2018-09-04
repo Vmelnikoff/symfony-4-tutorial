@@ -19,7 +19,7 @@
                 {% for notification in notifications %}
                     <li class="list-group-item">
                         <a href="{{ path('notification_acknowledge', {'id': notification.id}) }}"
-                        class="btn btn-sm btn-primary float-right">
+                           class="btn btn-sm btn-primary float-right">
                             OK
                         </a>
                         {% if notification is like %}

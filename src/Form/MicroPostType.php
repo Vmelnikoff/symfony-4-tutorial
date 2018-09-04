@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form;
-
 
 use App\Entity\MicroPost;
 use Symfony\Component\Form\AbstractType;
@@ -16,7 +14,8 @@ class MicroPostType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('text', TextareaType::class, ['label' => false])
-            ->add('save', SubmitType::class);
+                ->add('save', SubmitType::class)
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver)

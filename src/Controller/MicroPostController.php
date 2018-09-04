@@ -76,8 +76,7 @@ class MicroPostController
     /**
      * @Route("/", name="micro_post_index")
      */
-    public
-    function index(TokenStorageInterface $tokenStorage, UserRepository $userRepository): Response
+    public function index(TokenStorageInterface $tokenStorage, UserRepository $userRepository): Response
     {
         $currentUser = $tokenStorage->getToken()->getUser();
         $usersToFollow = [];
@@ -95,7 +94,7 @@ class MicroPostController
         }
 
         $html = $this->twig->render('micro-post/index.html.twig', [
-            'posts' => $posts,
+            'posts'         => $posts,
             'usersToFollow' => $usersToFollow,
         ]);
 
@@ -106,11 +105,8 @@ class MicroPostController
      * @Route("/edit/{id}", name="micro_post_edit")
      * @Security("is_granted('edit', microPost)", message="Access denied")
      */
-    public
-    function edit(
-        MicroPost $microPost,
-        Request $request
-    ): Response {
+    public function edit(MicroPost $microPost, Request $request): Response
+    {
 //    $this->denyAccessUnlessGranted('edit', $microPost);
 
 //    if (!$this->authorizationChecker->isGranted('edit', $microPost)) {
@@ -127,7 +123,7 @@ class MicroPostController
 
         return new Response(
             $this->twig->render('micro-post/add.html.twig', [
-                'form' => $form->createView()
+                'form' => $form->createView(),
             ])
         );
     }
@@ -137,11 +133,8 @@ class MicroPostController
      * @Route("/add", name="micro_post_add")
      * @Security("is_granted('ROLE_USER')")
      */
-    public
-    function add(
-        Request $request,
-        TokenStorageInterface $tokenStorage
-    ): Response {
+    public function add(Request $request, TokenStorageInterface $tokenStorage): Response
+    {
 //    $user = $this->getUser();
         $user = $tokenStorage->getToken()->getUser();
 
@@ -163,7 +156,7 @@ class MicroPostController
 
         return new Response(
             $this->twig->render('micro-post/add.html.twig', [
-                'form' => $form->createView()
+                'form' => $form->createView(),
             ])
         );
     }
@@ -172,10 +165,8 @@ class MicroPostController
      * @Route("/delete{id}", name="micro_post_delete")
      * @Security("is_granted('delete', microPost)", message="Access denied")
      */
-    public
-    function delete(
-        MicroPost $microPost
-    ): Response {
+    public function delete(MicroPost $microPost): Response
+    {
         $this->entityManager->remove($microPost);
         $this->entityManager->flush();
 
@@ -195,8 +186,8 @@ class MicroPostController
 //                ['time' => 'DESC']
 //            ),
 
-            'posts' => $userWithPosts->getPosts(),
-            'user' => $userWithPosts,
+'posts' => $userWithPosts->getPosts(),
+'user'  => $userWithPosts,
         ]);
 
         return new Response($html);

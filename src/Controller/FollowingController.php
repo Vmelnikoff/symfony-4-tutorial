@@ -23,7 +23,7 @@ class FollowingController extends Controller
     {
         /** @var User $currentUser */
         $currentUser = $this->getUser();
-        
+
         if ($userToFollow->getId() !== $currentUser->getId()) {
             $currentUser->follow($userToFollow);
 

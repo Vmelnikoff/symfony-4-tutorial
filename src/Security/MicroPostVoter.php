@@ -12,8 +12,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class MicroPostVoter extends Voter
 {
-    const EDIT = 'edit';
-    const DELETE = 'delete';
+    public const EDIT   = 'edit';
+    public const DELETE = 'delete';
     /**
      * @var AccessDecisionManagerInterface
      */
@@ -42,7 +42,7 @@ class MicroPostVoter extends Voter
         if ($this->decisionManager->decide($token, [User::ROLE_ADMIN])) {
             return true;
         }
-        
+
         $authenticatedUser = $token->getUser();
 
         if (!$authenticatedUser instanceof User) {

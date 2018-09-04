@@ -15,8 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface, \Serializable
 {
-    const ROLE_USER = 'ROLE_USER';
-    const ROLE_ADMIN = 'ROLE_ADMIN';
+    public const ROLE_USER  = 'ROLE_USER';
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
 
     /**
      * @ORM\Id()
@@ -132,7 +132,7 @@ class User implements UserInterface, \Serializable
         return serialize([
             $this->id,
             $this->username,
-            $this->password
+            $this->password,
         ]);
     }
 
@@ -232,10 +232,13 @@ class User implements UserInterface, \Serializable
 
     public function follow(User $userToFollow): void
     {
-        if ($this->getFollowing()->contains($userToFollow)) {
+        if ($this->getFollowing()
+                 ->contains($userToFollow)) {
             return;
         } else {
-            $this->getFollowing()->add($userToFollow);
+            $this->getFollowing()
+                 ->add($userToFollow)
+            ;
         }
     }
 

@@ -26,17 +26,19 @@ class UserRepository extends ServiceEntityRepository
     public function findAllWithMoreThan5Posts()
     {
         return $this->getFindAllWithMoreThan5PostsQuery()
-            ->getQuery()
-            ->getResult();
+                    ->getQuery()
+                    ->getResult()
+            ;
     }
 
     public function findAllWithMoreThan5PostsExceptUser(User $user)
     {
         return $this->getFindAllWithMoreThan5PostsQuery()
-            ->andHaving('u != :user')
-            ->setParameter('user', $user)
-            ->getQuery()
-            ->getResult();
+                    ->andHaving('u != :user')
+                    ->setParameter('user', $user)
+                    ->getQuery()
+                    ->getResult()
+            ;
     }
 
     private function getFindAllWithMoreThan5PostsQuery(): QueryBuilder
@@ -44,12 +46,13 @@ class UserRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('u');
 
         return $qb->select('u')
-            ->innerJoin(
-                'u.posts',
-                'mp'
-            )
-            ->groupBy('u')
-            ->having('count(mp) > 5');
+                  ->innerJoin(
+                      'u.posts',
+                      'mp'
+                  )
+                  ->groupBy('u')
+                  ->having('count(mp) > 5')
+            ;
     }
 
 //    /**

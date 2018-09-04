@@ -38,8 +38,7 @@ class BlogController
         \Twig_Environment $twig,
         SessionInterface $session,
         RouterInterface $router
-    )
-    {
+    ) {
         $this->twig = $twig;
         $this->session = $session;
         $this->router = $router;
@@ -65,8 +64,8 @@ class BlogController
         $posts = $this->session->get('posts');
         $posts[uniqid()] = [
             'title' => 'A random title ' . rand(1, 500),
-            'text' => 'Some random text' . rand(1, 500),
-            'date' => new \DateTime(),
+            'text'  => 'Some random text' . rand(1, 500),
+            'date'  => new \DateTime(),
         ];
         $this->session->set('posts', $posts);
 
@@ -85,7 +84,7 @@ class BlogController
         }
 
         $html = $this->twig->render('/blog/post.html.twig', [
-            'id' => $id,
+            'id'   => $id,
             'post' => $posts[$id],
         ]);
 

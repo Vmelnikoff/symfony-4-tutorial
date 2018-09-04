@@ -24,7 +24,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     public function getFilters()
     {
         return [
-            new TwigFilter('price', [$this, 'priceFilter'])
+            new TwigFilter('price', [$this, 'priceFilter']),
         ];
     }
 
@@ -45,7 +45,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         return [
             new \Twig_SimpleTest('like', function ($obj) {
                 return $obj instanceof LikeNotification;
-            })
+            }),
         ];
     }
 
