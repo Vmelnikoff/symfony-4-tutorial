@@ -40,7 +40,7 @@ class RegisterController extends Controller
             $userRegisterEvent = new UserRegisterEvent($user);
 
             $eventDispatcher->dispatch(UserRegisterEvent::NAME, $userRegisterEvent);
-            
+
 
             $this->redirectToRoute('micro_post_index');
         }
