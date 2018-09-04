@@ -28,9 +28,11 @@ class Mailer
 
     public function sendConfirmationEmail(User $user)
     {
-        $body = $this->twig->render('email/registration.html.twig', [
-            'user' => $user,
-        ]);
+        $body = $this->twig->render(
+            'email/registration.html.twig',
+            [
+                'user' => $user,
+            ]);
 
         $message = (new \Swift_Message())
             ->setSubject('Welcome to Micro-Post App!')

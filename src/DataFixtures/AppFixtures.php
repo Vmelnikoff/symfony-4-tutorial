@@ -4,17 +4,13 @@ namespace App\DataFixtures;
 
 use App\Entity\MicroPost;
 use App\Entity\User;
+use App\Security\TokenGenerator;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
 {
-    /**
-     * @var UserPasswordEncoderInterface
-     */
-    private $passwordEncoder;
-
     private const USERS = [
         [
             'username' => 'john_doe',
@@ -58,9 +54,19 @@ class AppFixtures extends Fixture
         'How was your day?'
     ];
 
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    /**
+     * @var UserPasswordEncoderInterface
+     */
+    private $passwordEncoder;
+    /**
+     * @var TokenGenerator
+     */
+    private $tokenGenerator;
+
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder, TokenGenerator $tokenGenerator)
     {
         $this->passwordEncoder = $passwordEncoder;
+        $this->tokenGenerator = $tokenGenerator;
     }
 
     public function load(ObjectManager $manager)
@@ -102,7 +108,9 @@ class AppFixtures extends Fixture
                     $userData['password']
                 )
             );
+//            $user->setConfirmationToken($this->tokenGenerator->getRandomSecureToken(30));
             $user->setRoles($userData['roles']);
+            $user->setEnabled(true);
 
             $this->addReference(
                 $userData['username'],
