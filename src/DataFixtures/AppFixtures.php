@@ -108,7 +108,7 @@ class AppFixtures extends Fixture
                     $userData['password']
                 )
             );
-//            $user->setConfirmationToken($this->tokenGenerator->getRandomSecureToken(30));
+            $user->setConfirmationToken($this->tokenGenerator->getRandomSecureToken(30));
             $user->setRoles($userData['roles']);
             $user->setEnabled(true);
 

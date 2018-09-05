@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -193,14 +192,10 @@ class MicroPostController
         return new Response($html);
     }
 
-
     /**
      * @Route("/{id}", name="micro_post_post")
      */
-    public
-    function post(
-        MicroPost $post
-    ): Response {
+    public function post(MicroPost $post): Response {
 //        use ParamConverter for fetch $post
 //        $post = $this->microPostRepository->find($id);
 
@@ -210,6 +205,5 @@ class MicroPostController
             ]
         ));
     }
-
 
 }
