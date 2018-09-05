@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Event;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -42,7 +42,7 @@ class LocalSubscriber implements EventSubscriberInterface
         if ($locale = $request->attributes->get('_locale')) {
             $request->getSession()->set('_locale', $locale);
         } else {
-            $request->setLocale($request->getSession()->get('_locale'), $this->defaultLocale);
+            $request->setLocale($request->getSession()->get('_locale', $this->defaultLocale));
         }
     }
 }
