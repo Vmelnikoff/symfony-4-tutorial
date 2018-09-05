@@ -310,11 +310,17 @@ class User implements AdvancedUserInterface, \Serializable
         return $this->enabled;
     }
 
+    /**
+     * @return UserPreferences|null
+     */
     public function getPreferences()
     {
         return $this->preferences;
     }
 
+    /**
+     * @param $preferences
+     */
     public function setPreferences($preferences): void
     {
         $this->preferences = $preferences;
