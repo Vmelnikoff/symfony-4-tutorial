@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\MicroPost;
 use App\Entity\User;
+use App\Entity\UserPreferences;
 use App\Security\TokenGenerator;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -52,6 +53,11 @@ class AppFixtures extends Fixture
         'What are you up to today?',
         'Did you watch the game yesterday?',
         'How was your day?'
+    ];
+
+    private const LANGUAGES = [
+        'en',
+        'fr',
     ];
 
     /**
@@ -117,9 +123,16 @@ class AppFixtures extends Fixture
                 $user
             );
 
+            $preferences = new UserPreferences();
+            $preferences->setLocale(self::LANGUAGES[random_int(0, 1)]);
+
+            $user->setPreferences($preferences);
+
+//            $manager->persist($preferences);
             $manager->persist($user);
-            $manager->flush();
         }
+
+        $manager->flush();
 
     }
 }
