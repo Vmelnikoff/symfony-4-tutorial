@@ -4,7 +4,7 @@ jobs:
     working_directory: ~/micropost
     docker:
     # specify the version you desire here
-    - image: circleci/7.2.4-apache-stretch-node-browsers
+    - image: circleci/7.2.9-apache-stretch-node-browsers-legacy
       environment:
         APP_ENV: test
         DATABASE_URL: mysql://root:root@127.0.0.1:3306/micro-post
