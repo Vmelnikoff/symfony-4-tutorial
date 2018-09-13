@@ -40,3 +40,35 @@ jobs:
       - run:
           name: Run tests
           command: ./bin/phpunit
+
+  deploy:
+    working_directory: ~/micropost
+    docker:
+    - image: circleci/php:7.2.9-apache-stretch-node-browsers-legacy
+    steps:
+    - checkout
+    - run: Composer install
+      command: sudo composer install -n --prefer-dist
+    - run: Clear cache
+        command: php bin/console cache:clear --env=prod --no-interaction
+    - run: Yarn
+        command: yarn install && yarn run encore production
+    - run: Add droplet
+        command: ssh-keyscan -H $DROPLET_IP >> ~/.ssh/known_hosts
+    - run: Pre deploy
+        command: ssh -T $DROPLET_USER:$DROPLET_IP < bin/deploy/pre_deploy.sh
+    - run: Deploy code
+        command: rsync -vzcr5Lhp --exclude '.env' --delete ~/micropost/ $DROPLET_USER@$DROPLET_IP:/var/www/micropost_current
+    - run: Post deploy
+        command: ssh -T $DROPLET_USER:$DROPLET_IP < bin/deploy/deploy.sh
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          requres:
+            - build
+          filters:
+            branches:
+              only: master
