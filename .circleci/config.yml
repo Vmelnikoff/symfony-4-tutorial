@@ -47,19 +47,26 @@ jobs:
     - image: circleci/php:7.2.9-apache-stretch-node-browsers-legacy
     steps:
     - checkout
-    - run: Composer install
-      command: sudo composer install -n --prefer-dist
-    - run: Clear cache
+    - run:
+        name: Composer install
+        command: sudo composer install -n --prefer-dist
+    - run:
+        name: Clear cache
         command: php bin/console cache:clear --env=prod --no-interaction
-    - run: Yarn
+    - run:
+        name: Yarn
         command: yarn install && yarn run encore production
-    - run: Add droplet
+    - run:
+        name: Add droplet
         command: ssh-keyscan -H $DROPLET_IP >> ~/.ssh/known_hosts
-    - run: Pre deploy
+    - run:
+        name: Pre deploy
         command: ssh -T $DROPLET_USER:$DROPLET_IP < bin/deploy/pre_deploy.sh
-    - run: Deploy code
+    - run:
+        name: Deploy code
         command: rsync -vzcr5Lhp --exclude '.env' --delete ~/micropost/ $DROPLET_USER@$DROPLET_IP:/var/www/micropost_current
-    - run: Post deploy
+    - run:
+        name: Post deploy
         command: ssh -T $DROPLET_USER:$DROPLET_IP < bin/deploy/deploy.sh
 workflows:
   version: 2
