@@ -36,7 +36,7 @@ jobs:
           command: php bin/console doctrine:migrations:migrate --env=test --no-interaction
       - run:
           name: chmod permissions
-          command: chmod +x vendor/bin/phpunit
+          command: chmod +x ./bin/phpunit
       - run:
           name: Run tests
           command: ./bin/phpunit
